@@ -1,0 +1,396 @@
+[
+  {
+    "community_id": 0,
+    "size": 518,
+    "leaders": [
+      "DEBT",
+      "CREDIT CARD",
+      "DEBT COLLECTOR",
+      "LOAN",
+      "BORROWER"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 172,
+      "ACTION": 122,
+      "FINANCIAL_PRODUCT": 103,
+      "ORGANIZATION": 49,
+      "RISK": 45
+    },
+    "summary": "This community helps you understand how borrowing money works, from getting a loan or credit card to"
+  },
+  {
+    "community_id": 1,
+    "size": 439,
+    "leaders": [
+      "INCOME",
+      "EXPENSES",
+      "YOUR MONEY, YOUR GOALS TOOLKIT",
+      "BILLS",
+      "MODULE 4: PAYING BILLS"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 176,
+      "ACTION": 142,
+      "FINANCIAL_PRODUCT": 69,
+      "RISK": 20,
+      "EVENT": 14
+    },
+    "summary": "This community helps you understand how your income and expenses work, how to manage important payments like bills"
+  },
+  {
+    "community_id": 2,
+    "size": 431,
+    "leaders": [
+      "STATE FARM",
+      "AUTO INSURANCE",
+      "COMPREHENSIVE COVERAGE",
+      "CAR INSURANCE",
+      "INSURANCE REVIEW"
+    ],
+    "dominant_types": {
+      "GEO": 117,
+      "FINANCIAL_CONCEPT": 103,
+      "FINANCIAL_PRODUCT": 88,
+      "ACTION": 33,
+      "ORGANIZATION": 27
+    },
+    "summary": "This community helps you understand car insurance, including different types of coverage and how companies like State Farm can"
+  },
+  {
+    "community_id": 3,
+    "size": 428,
+    "leaders": [
+      "PREPAID CARD",
+      "CHECKING ACCOUNT",
+      "BANK",
+      "FEES",
+      "PAYROLL CARD"
+    ],
+    "dominant_types": {
+      "ACTION": 163,
+      "FINANCIAL_CONCEPT": 124,
+      "FINANCIAL_PRODUCT": 71,
+      "ORGANIZATION": 34,
+      "RISK": 31
+    },
+    "summary": "This community helps you understand how to handle your money for everyday spending and getting paid, especially if"
+  },
+  {
+    "community_id": 4,
+    "size": 302,
+    "leaders": [
+      "CREDIT REPORT",
+      "CREDIT REPORTS",
+      "IDENTITY THEFT",
+      "CREDIT HISTORY",
+      "CREDIT SCORE"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 79,
+      "ACTION": 70,
+      "FINANCIAL_PRODUCT": 53,
+      "RISK": 43,
+      "ORGANIZATION": 40
+    },
+    "summary": "This section helps you understand how your financial reputation, called your credit history, is built and tracked through"
+  },
+  {
+    "community_id": 5,
+    "size": 266,
+    "leaders": [
+      "LIFE EVENTS",
+      "GOALS",
+      "SAVING",
+      "MONEY",
+      "SETTING GOALS"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 112,
+      "ACTION": 64,
+      "EVENT": 29,
+      "RISK": 27,
+      "FINANCIAL_PRODUCT": 21
+    },
+    "summary": "This community helps you connect your everyday money with your future hopes and dreams, like buying"
+  },
+  {
+    "community_id": 6,
+    "size": 261,
+    "leaders": [
+      "EMERGENCY FINANCIAL FIRST AID KIT (EFFAK)",
+      "EMERGENCY FINANCIAL FIRST AID KIT",
+      "FEMA",
+      "FINANCIAL LITERACY AND EDUCATION COMMISSION",
+      "FINANCIAL AND LEGAL DOCUMENTATION"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 51,
+      "ORGANIZATION": 50,
+      "ACTION": 50,
+      "FINANCIAL_PRODUCT": 48,
+      "PERSON": 36
+    },
+    "summary": "This community focuses on preparing for unexpected financial challenges by organizing your important papers and information,"
+  },
+  {
+    "community_id": 7,
+    "size": 189,
+    "leaders": [
+      "CFPB",
+      "CONSUMER FINANCIAL PROTECTION BUREAU",
+      "BUREAU OF CONSUMER FINANCIAL PROTECTION",
+      "DEBT COLLECTORS",
+      "YOUR MONEY, YOUR GOALS"
+    ],
+    "dominant_types": {
+      "ACTION": 40,
+      "ORGANIZATION": 35,
+      "FINANCIAL_PRODUCT": 35,
+      "FINANCIAL_CONCEPT": 31,
+      "RISK": 23
+    },
+    "summary": "This community helps you understand who protects your money and rights, like the government's Consumer"
+  },
+  {
+    "community_id": 8,
+    "size": 165,
+    "leaders": [
+      "PUBLIC BENEFITS",
+      "GOVERNMENT BENEFITS CARD",
+      "GOVERNMENT BENEFITS",
+      "WAGE GARNISHMENTS",
+      "FEDERAL GOVERNMENT"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 64,
+      "FINANCIAL_PRODUCT": 37,
+      "ORGANIZATION": 28,
+      "ACTION": 17,
+      "RISK": 13
+    },
+    "summary": "This community helps you understand government support programs like food assistance, housing aid, and disability benefits"
+  },
+  {
+    "community_id": 9,
+    "size": 159,
+    "leaders": [
+      "PERSONAL INFORMATION",
+      "SCAMS",
+      "FINANCIAL ACCOUNTS",
+      "BANKS",
+      "CREDIT UNIONS"
+    ],
+    "dominant_types": {
+      "FINANCIAL_PRODUCT": 42,
+      "FINANCIAL_CONCEPT": 40,
+      "ACTION": 32,
+      "RISK": 22,
+      "ORGANIZATION": 12
+    },
+    "summary": "This community covers the essential tools and places to manage your money, like bank accounts and credit unions"
+  },
+  {
+    "community_id": 10,
+    "size": 150,
+    "leaders": [
+      "FEDERAL STUDENT LOANS",
+      "PRIVATE STUDENT LOANS",
+      "LOANS",
+      "DEFERMENT",
+      "LOAN SERVICER"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 44,
+      "FINANCIAL_PRODUCT": 41,
+      "ORGANIZATION": 24,
+      "ACTION": 17,
+      "EVENT": 13
+    },
+    "summary": "This community helps you understand different types of borrowed money, especially for school, and how to"
+  },
+  {
+    "community_id": 11,
+    "size": 126,
+    "leaders": [
+      "FOCUS ON REENTRY COMPANION GUIDE",
+      "REMITTANCE TRANSFER PROVIDERS",
+      "PAYROLL DEDUCTION",
+      "TAXES",
+      "UPFRONT COSTS"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 46,
+      "FINANCIAL_PRODUCT": 25,
+      "ACTION": 24,
+      "ORGANIZATION": 11,
+      "EVENT": 6
+    },
+    "summary": "This community helps you understand how money moves in your life, from what's taken"
+  },
+  {
+    "community_id": 12,
+    "size": 91,
+    "leaders": [
+      "CREDIT CARDS",
+      "PREPAID CARDS",
+      "CREDIT UTILIZATION RATE",
+      "SECURED CREDIT CARDS",
+      "CREDIT LIMIT"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 36,
+      "ACTION": 23,
+      "RISK": 15,
+      "FINANCIAL_PRODUCT": 9,
+      "GEO": 3
+    },
+    "summary": "This community explains how different cards like credit cards, prepaid cards, and secured credit cards work, along"
+  },
+  {
+    "community_id": 13,
+    "size": 81,
+    "leaders": [
+      "IRS",
+      "SOCIAL SECURITY NUMBER",
+      "MIGUEL SMITH",
+      "BIG CITY MUNICIPAL COURT",
+      "FEDERAL TAX REFUNDS"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 22,
+      "ORGANIZATION": 18,
+      "FINANCIAL_PRODUCT": 15,
+      "ACTION": 10,
+      "GEO": 6
+    },
+    "summary": "This community helps you understand essential parts of managing your money in the U.S., like"
+  },
+  {
+    "community_id": 14,
+    "size": 48,
+    "leaders": [
+      "UTILITY BILLS",
+      "WEEKLY EXPENSES",
+      "POOR CREDIT HISTORY",
+      "THINGS I NEED FOR HOUSING",
+      "HOUSING"
+    ],
+    "dominant_types": {
+      "FINANCIAL_CONCEPT": 28,
+      "FINANCIAL_PRODUCT": 12,
+      "ORGANIZATION": 4,
+      "RISK": 3,
+      "ACTION": 1
+    },
+    "summary": "This community helps you understand how to manage your everyday money for essential needs like housing and utility bills"
+  },
+  {
+    "community_id": 15,
+    "size": 42,
+    "leaders": [
+      "HOUSEHOLD IDENTIFICATION",
+      "IDENTIFICATION DOCUMENTS",
+      "DRIVER'S LICENSE",
+      "U.S. CITIZENSHIP AND IMMIGRATION SERVICES (USCIS)",
+      "CONSULATES IN THE UNITED STATES"
+    ],
+    "dominant_types": {
+      "FINANCIAL_PRODUCT": 14,
+      "ORGANIZATION": 12,
+      "ACTION": 8,
+      "FINANCIAL_CONCEPT": 6,
+      "GEO": 2
+    },
+    "summary": "This community helps you understand the vital importance of having and protecting your identification documents, like a driver"
+  },
+  {
+    "community_id": 16,
+    "size": 15,
+    "leaders": [
+      "WORKFORCE DEVELOPMENT PROGRAMS",
+      "COMMUNITY COLLEGES",
+      "STATE CAREER OR WORKFORCE DEVELOPMENT WEBSITE",
+      "CAREERONESTOP.ORG",
+      "ONLINE TRAINING"
+    ],
+    "dominant_types": {
+      "ORGANIZATION": 11,
+      "ACTION": 2,
+      "FINANCIAL_PRODUCT": 2
+    },
+    "summary": "This community is all about finding free or affordable ways to learn new skills and improve your"
+  },
+  {
+    "community_id": 17,
+    "size": 15,
+    "leaders": [
+      "FOCUS ON MILITARY COMMUNITIES COMPANION GUIDE",
+      "MILITARY RELIEF SOCIETIES",
+      "VETERANS",
+      "RESERVE SERVICEMEMBERS",
+      "PERMANENT CHANGE OF STATION (PCS)"
+    ],
+    "dominant_types": {
+      "PERSON": 6,
+      "FINANCIAL_CONCEPT": 5,
+      "EVENT": 1,
+      "RISK": 1,
+      "ORGANIZATION": 1
+    },
+    "summary": "This community focuses on financial guidance specifically for military members, veterans, and their families, covering unique"
+  },
+  {
+    "community_id": 18,
+    "size": 13,
+    "leaders": [
+      "FOCUS ON NATIVE COMMUNITIES COMPANION GUIDE",
+      "FINANCIAL EXPLOITATION OF ELDERS",
+      "INDIVIDUAL INDIAN MONEY ACCOUNT (IIM)",
+      "ELDERS",
+      "FINANCIAL EMPOWERMENT AND ELDERS"
+    ],
+    "dominant_types": {
+      "ACTION": 4,
+      "FINANCIAL_CONCEPT": 4,
+      "PERSON": 2,
+      "ORGANIZATION": 1,
+      "FINANCIAL_PRODUCT": 1
+    },
+    "summary": "This community helps you understand unique financial situations, especially how to protect older family members from scams and manage"
+  },
+  {
+    "community_id": 19,
+    "size": 7,
+    "leaders": [
+      "529 PLAN",
+      "INCOME TAX",
+      "FINANCIAL INVESTMENT FIRM",
+      "STATE'S PROGRAM",
+      "SAVE FOR EDUCATION AND TRAINING"
+    ],
+    "dominant_types": {
+      "FINANCIAL_PRODUCT": 2,
+      "FINANCIAL_CONCEPT": 2,
+      "ORGANIZATION": 2,
+      "ACTION": 1
+    },
+    "summary": "This community helps you understand how to save for future education or job training for yourself or your children using"
+  },
+  {
+    "community_id": 20,
+    "size": 5,
+    "leaders": [
+      "PRE-SCREENED CREDIT OFFERS",
+      "OPT OUT",
+      "OPTOUTPRESCREEN.COM",
+      "OPTING OUT OF PRE-SCREENED OFFERS",
+      "OPT IN"
+    ],
+    "dominant_types": {
+      "ACTION": 3,
+      "ORGANIZATION": 1,
+      "FINANCIAL_PRODUCT": 1
+    },
+    "summary": "This community teaches you how to stop getting unwanted credit card and loan offers in the mail, which can"
+  }
+]

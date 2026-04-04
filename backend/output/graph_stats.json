@@ -1,0 +1,127 @@
+{
+  "total_entities": 4194,
+  "total_relationships": 9860,
+  "total_communities": 21,
+  "graph_nodes": 4194,
+  "graph_edges": 8066,
+  "connected_components": 228,
+  "entity_type_distribution": {
+    "FINANCIAL_CONCEPT": 1255,
+    "ACTION": 891,
+    "FINANCIAL_PRODUCT": 736,
+    "ORGANIZATION": 396,
+    "RISK": 316,
+    "GEO": 166,
+    "PERSON": 137,
+    "EVENT": 133,
+    "\"FINANCIAL_CONCEPT\"": 53,
+    "\"ACTION\"": 32,
+    "\"FINANCIAL_PRODUCT\"": 30,
+    "\"RISK\"": 24,
+    "\"ORGANIZATION\"": 15,
+    "\"PERSON\"": 9,
+    "\"EVENT\"": 1
+  },
+  "top_entities_by_degree": [
+    {
+      "name": "DEBT",
+      "degree": 213,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "PREPAID CARD",
+      "degree": 190,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "STATE FARM",
+      "degree": 178,
+      "type": "ORGANIZATION"
+    },
+    {
+      "name": "INCOME",
+      "degree": 125,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "YOUR MONEY, YOUR GOALS TOOLKIT",
+      "degree": 119,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "CREDIT REPORT",
+      "degree": 99,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "FEES",
+      "degree": 87,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "EMERGENCY FINANCIAL FIRST AID KIT (EFFAK)",
+      "degree": 86,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "EXPENSES",
+      "degree": 85,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "CHECKING ACCOUNT",
+      "degree": 84,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "CREDIT CARD",
+      "degree": 82,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "BILLS",
+      "degree": 77,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "BANK",
+      "degree": 76,
+      "type": "ORGANIZATION"
+    },
+    {
+      "name": "CREDIT REPORTS",
+      "degree": 72,
+      "type": "FINANCIAL_CONCEPT"
+    },
+    {
+      "name": "DEBT COLLECTOR",
+      "degree": 70,
+      "type": "ORGANIZATION"
+    },
+    {
+      "name": "CFPB",
+      "degree": 69,
+      "type": "ORGANIZATION"
+    },
+    {
+      "name": "IDENTITY THEFT",
+      "degree": 66,
+      "type": "EVENT"
+    },
+    {
+      "name": "LOAN",
+      "degree": 64,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "SAVINGS ACCOUNT",
+      "degree": 61,
+      "type": "FINANCIAL_PRODUCT"
+    },
+    {
+      "name": "BORROWER",
+      "degree": 60,
+      "type": "PERSON"
+    }
+  ]
+}

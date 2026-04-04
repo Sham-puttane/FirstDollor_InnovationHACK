@@ -1,0 +1,41 @@
+# Environment & secrets
+.env
+*.env
+
+# Downloaded PDFs (large, can re-download)
+backend/downloads/
+
+# GraphRAG cache (large, regenerable)
+backend/cache/
+backend/logs/
+
+# Large embedding files (regenerable)
+backend/output/entity_embeddings.json
+backend/output/entity_embeddings.npz
+backend/output/community_embeddings.json
+backend/output/embeddings_progress.json
+
+# GraphRAG parquet files (regenerable)
+backend/output/*.parquet
+
+# LanceDB
+backend/output/lancedb/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+backend/litellm_proxy.log
+backend/litellm_proxy_config.yaml
+backend/ingest_manifest.json
+
+# Archives
+*.tar.gz
