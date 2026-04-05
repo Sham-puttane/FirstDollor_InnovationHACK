@@ -241,10 +241,6 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hid
 <p class="text-xs text-[#555] font-semibold uppercase tracking-wider mb-3">What-If Scenarios</p>
 <div class="flex flex-wrap gap-2" id="wifBox"></div>
 </div>
-<div id="traceBox" class="mt-4 p-4 rounded-xl bg-[#0e0e0e] border border-[#1a1a1a] hidden">
-<p class="text-xs text-[#555] font-semibold uppercase tracking-wider mb-2">Reasoning Path</p>
-<div id="traceContent" class="text-xs text-[#888] space-y-1"></div>
-</div>
 </div>
 <div>
 <div class="flex items-center justify-between mb-4">
@@ -252,7 +248,17 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hid
 <button class="md:hidden text-xs text-accent" onclick="document.getElementById('graphWrap2').classList.toggle('hidden')">Toggle</button>
 </div>
 <div id="graphWrap2">
+<div class="relative">
 <div id="graphContainer2" class="rounded-xl border border-[#1a1a1a] bg-[#060606]" style="height:500px"></div>
+<!-- Floating reasoning popover -->
+<div id="traceBox" class="hidden absolute top-4 right-4 w-72 p-4 rounded-xl border border-accent/20 z-30" style="background:rgba(14,14,14,.95);backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 20px rgba(147,51,234,.1)">
+<div class="flex items-center justify-between mb-3">
+<p class="text-[10px] text-accent font-semibold uppercase tracking-wider">Reasoning Path</p>
+<button onclick="document.getElementById('traceBox').classList.add('hidden')" class="text-[#555] hover:text-white text-sm leading-none">&times;</button>
+</div>
+<div id="traceContent" class="text-xs text-[#999] space-y-2"></div>
+</div>
+</div>
 <div class="flex items-center gap-4 mt-3 text-[10px] text-[#555]">
 <span><span class="legend-dot" style="background:#9333ea"></span> Entry</span>
 <span><span class="legend-dot" style="background:#ef4444"></span> Risk</span>
