@@ -132,7 +132,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hid
 <span><span class="legend-dot" style="background:#9333ea"></span> Entry</span>
 <span><span class="legend-dot" style="background:#ef4444"></span> Risk</span>
 <span><span class="legend-dot" style="background:#22c55e"></span> Action</span>
-<span><span class="legend-dot" style="background:#f59e0b"></span> Resource</span>
+<span><span class="legend-dot" style="background:#eab308"></span> Resource</span>
 </div>
 </div>
 
@@ -163,7 +163,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hid
 <span><span class="legend-dot" style="background:#9333ea"></span> Entry</span>
 <span><span class="legend-dot" style="background:#ef4444"></span> Risk</span>
 <span><span class="legend-dot" style="background:#22c55e"></span> Action</span>
-<span><span class="legend-dot" style="background:#f59e0b"></span> Resource</span>
+<span><span class="legend-dot" style="background:#eab308"></span> Resource</span>
 </div>
 </div>
 </div>
@@ -176,7 +176,8 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hid
 const API='http://localhost:5000';
 const A={q1:null,q2:null,q3:null,q4:null,q5:[],q6:''};
 let DATA=null,NET=null,NET2=null;
-const CM={purple:'#9333ea',red:'#ef4444',green:'#22c55e',amber:'#f59e0b',info:'#6366f1',gray:'#555'};
+const CM={purple:'#9333ea',red:'#ef4444',green:'#22c55e',amber:'#eab308',info:'#9333ea',gray:'#666'};
+const CLABEL={purple:'Entry',red:'Risk',green:'Action',amber:'Resource',info:'Entry',gray:'Other'};
 
 // ─── Form ───────────────────────────────────────────────────────
 function sel(el,q,v){document.querySelectorAll(`#${q}g .opt`).forEach(o=>o.classList.remove('selected'));el.classList.add('selected');A[q]=v;ud()}
@@ -249,7 +250,7 @@ NET.setOptions({physics:false});
 runTraversalAnimation(nodes,edges,steps);
 }
 NET.once('stabilized',startAnim);
-setTimeout(startAnim,3000);
+setTimeout(startAnim,1500);
 }
 
 function runTraversalAnimation(nodes,edges,steps){
@@ -258,7 +259,16 @@ const bcEl=document.getElementById('breadcrumb');
 const visited=new Set();
 const visitedEdges=new Set();
 
-// Collect entry nodes
+// Pre-build edge index for O(1) lookup instead of iterating all edges
+const edgeIdx={};// nodeId -> [{edgeId, other}]
+edges.forEach(e=>{
+if(!edgeIdx[e._origFrom])edgeIdx[e._origFrom]=[];
+if(!edgeIdx[e._origTo])edgeIdx[e._origTo]=[];
+edgeIdx[e._origFrom].push({id:e.id,other:e._origTo});
+edgeIdx[e._origTo].push({id:e.id,other:e._origFrom});
+});
+
+// Collect entry nodes (first 2 steps)
 const entryNodes=[];
 const allTraversalNodes=[];
 steps.forEach((s,i)=>{
@@ -268,169 +278,137 @@ if(i<2&&!entryNodes.includes(n)&&nodes.get(n))entryNodes.push(n);
 });
 });
 
-// Build hop sequence
+// Build hop sequence — deduplicate nodes across steps
+const seenInHops=new Set();
 const hopSequence=[];
 steps.forEach(s=>{
-const stepNodes=(s.source_nodes||[]).filter(n=>nodes.get(n));
-if(stepNodes.length)hopSequence.push({step:s,nodes:stepNodes});
+const fresh=(s.source_nodes||[]).filter(n=>nodes.get(n)&&!seenInHops.has(n));
+if(fresh.length){
+hopSequence.push({step:s,nodes:fresh});
+fresh.forEach(n=>seenInHops.add(n));
+}
 });
 
-const totalHops=hopSequence.length;
-const hopDelay=Math.max(600,Math.min(1000,9000/Math.max(totalHops,1)));
+// Timing: slower for fewer hops, faster for many — always readable
+const totalNodes=hopSequence.reduce((a,h)=>a+h.nodes.length,0)+entryNodes.length;
+const perNodeDelay=Math.max(500,Math.min(900,8000/Math.max(totalNodes,1)));
 
-// Helper: add node to breadcrumb trail
-function addBreadcrumb(nid,color,isArrow){
-if(isArrow){
-const arrow=document.createElement('span');
-arrow.textContent='\u2192';
-arrow.className='text-[#444]';
-bcEl.appendChild(arrow);
-}
-const chip=document.createElement('span');
-chip.textContent=nid.length>22?nid.substring(0,20)+'..':nid;
-chip.className='px-2 py-0.5 rounded text-[10px] font-semibold transition-all duration-300';
-chip.style.background=color+'25';
-chip.style.color=color;
-chip.style.border='1px solid '+color+'40';
-chip.style.animation='fadeIn .3s ease both';
-bcEl.appendChild(chip);
-// Auto-scroll breadcrumb
+// Helper: breadcrumb chip
+function addCrumb(nid,color,arrow){
+if(arrow){const a=document.createElement('span');a.textContent='\u2192';a.className='text-[#444] shrink-0';bcEl.appendChild(a)}
+const c=document.createElement('span');
+c.textContent=nid.length>20?nid.substring(0,18)+'..':nid;
+c.className='px-2 py-0.5 rounded text-[10px] font-semibold shrink-0';
+c.style.cssText=`background:${color}20;color:${color};border:1px solid ${color}35;animation:fadeIn .3s ease both`;
+bcEl.appendChild(c);
 bcEl.scrollLeft=bcEl.scrollWidth;
 }
 
-// ─── PHASE A: Entry nodes ────────────────────────────────────
+// Helper: light up a node (no shadow — too expensive)
+function lightNode(nid,scale,bordered){
+const nd=nodes.get(nid);
+if(!nd)return;
+nodes.update({id:nid,
+size:nd._baseSize*scale,
+color:{background:nd._origColor,border:bordered?'#fff':nd._origColor+'80'},
+font:{color:bordered?'#fff':'rgba(220,220,220,.7)',size:bordered?13:10},
+borderWidth:bordered?3:1
+});
+}
+
+// Helper: light edges from nid to visited neighbors
+function lightEdges(nid){
+const nd=nodes.get(nid);
+const color=nd?nd._origColor:'#9333ea';
+(edgeIdx[nid]||[]).forEach(({id,other})=>{
+if(visited.has(other)){
+edges.update({id,color:{color},width:3.5,dashes:[8,4]});
+visitedEdges.add(id);
+}
+});
+}
+
+// ─── PHASE A: Entry nodes (highlight user's input) ───────────
 statusEl.textContent='Identifying your profile...';
 bcEl.innerHTML='';
-let entryIdx=0;
-function showEntry(){
-if(entryIdx>=entryNodes.length){setTimeout(startHops,600);return}
-const nid=entryNodes[entryIdx];
-const nd=nodes.get(nid);
-if(nd){
-nodes.update({id:nid,
-size:nd._baseSize*3,
-color:{background:nd._origColor,border:'#fff'},
-font:{color:'#fff',size:14,bold:{toString:()=>'true'}},
-borderWidth:3,
-shadow:{enabled:true,color:nd._origColor+'70',size:30}
-});
+let ei=0;
+function nextEntry(){
+if(ei>=entryNodes.length){setTimeout(doHops,800);return}
+const nid=entryNodes[ei];
+lightNode(nid,3,true);
 visited.add(nid);
-addBreadcrumb(nid,nd._origColor,entryIdx>0);
+addCrumb(nid,nodes.get(nid)?._origColor||'#9333ea',ei>0);
+try{NET.focus(nid,{scale:1,animation:{duration:300}})}catch(x){}
+ei++;
+setTimeout(nextEntry,perNodeDelay);
 }
-entryIdx++;
-setTimeout(showEntry,400);
-}
-setTimeout(showEntry,500);
+setTimeout(nextEntry,400);
 
-// ─── PHASE B: Hop-by-hop ─────────────────────────────────────
-let hopIdx=0;
-let prevActive=[];
+// ─── PHASE B: Hop through steps ──────────────────────────────
+let hi=0;
+let prevAct=[];
 
-function startHops(){hopNext()}
+function doHops(){nextHop()}
 
-function hopNext(){
-if(hopIdx>=hopSequence.length){
+function nextHop(){
+if(hi>=hopSequence.length){
+// ─── PHASE C: Clean up → focused path ────────────────────
 statusEl.textContent='Path discovered. Building your queue...';
-// ─── PHASE C: Focus view — hide non-traversed nodes ──────
 setTimeout(()=>{
-// Hide all non-traversed nodes
-nodes.forEach(n=>{
-if(!visited.has(n.id)){
-nodes.update({id:n.id,hidden:true});
-}
-});
-// Hide non-traversed edges
-edges.forEach(e=>{
-if(!visitedEdges.has(e.id)){
-edges.update({id:e.id,hidden:true});
-}
-});
-// Settle traversed nodes to clean final state
+// Batch: hide non-traversed
+const hideN=[];const hideE=[];
+nodes.forEach(n=>{if(!visited.has(n.id))hideN.push({id:n.id,hidden:true})});
+edges.forEach(e=>{if(!visitedEdges.has(e.id))hideE.push({id:e.id,hidden:true})});
+if(hideN.length)nodes.update(hideN);
+if(hideE.length)edges.update(hideE);
+// Settle traversed nodes
+const settle=[];
 visited.forEach(nid=>{
 const nd=nodes.get(nid);
-if(nd){
-nodes.update({id:nid,
-size:nd._baseSize*2,
-color:{background:nd._origColor,border:nd._origColor},
-font:{color:'#eee',size:11},
-borderWidth:2,
-shadow:{enabled:true,color:nd._origColor+'40',size:15}
+if(nd)settle.push({id:nid,size:nd._baseSize*2,color:{background:nd._origColor,border:nd._origColor},font:{color:'#eee',size:10},borderWidth:1});
 });
-}
-});
-// Re-fit to show only the path
-NET.fit({animation:{duration:600,easingFunction:'easeInOutQuad'}});
-},500);
-setTimeout(()=>showResults(),2500);
+if(settle.length)nodes.update(settle);
+try{NET.fit({animation:{duration:500}})}catch(x){}
+},400);
+setTimeout(showResults,2200);
 return;
 }
 
-const hop=hopSequence[hopIdx];
-statusEl.textContent=`Step ${hop.step.step_number}: ${hop.step.action.substring(0,50)}...`;
+const hop=hopSequence[hi];
+statusEl.textContent=`Step ${hop.step.step_number}: ${hop.step.action.substring(0,55)}...`;
 
-// Dim previous active to visited
-prevActive.forEach(nid=>{
-const nd=nodes.get(nid);
-if(nd){
-nodes.update({id:nid,
-size:nd._baseSize*1.8,
-color:{background:nd._origColor,border:nd._origColor+'80'},
-font:{color:'rgba(220,220,220,.7)',size:10},
-borderWidth:1,
-shadow:{enabled:true,color:nd._origColor+'25',size:10}
-});
+// Dim previous active → visited state (batch)
+if(prevAct.length){
+const dims=prevAct.map(nid=>({id:nid,...dimProps(nid)})).filter(x=>x);
+if(dims.length)nodes.update(dims);
 }
-});
-prevActive=[];
+prevAct=[];
 
-// Light up this step's nodes
+// Illuminate this step's nodes one by one
 let ni=0;
-function lightNode(){
+function doNode(){
 if(ni>=hop.nodes.length){
-hopIdx++;
-setTimeout(hopNext,hopDelay*0.35);
+hi++;
+setTimeout(nextHop,perNodeDelay*0.5);
 return;
 }
 const nid=hop.nodes[ni];
-const nd=nodes.get(nid);
-if(nd){
-// Active: big, bright, labeled
-nodes.update({id:nid,
-size:nd._baseSize*3.2,
-color:{background:nd._origColor,border:'#fff'},
-font:{color:'#fff',size:14,bold:{toString:()=>'true'}},
-borderWidth:3,
-shadow:{enabled:true,color:nd._origColor+'80',size:35}
-});
-prevActive.push(nid);
-
-// Bright glowing edges to visited neighbors
-edges.forEach(e=>{
-if(e._origFrom===nid||e._origTo===nid){
-const other=e._origFrom===nid?e._origTo:e._origFrom;
-if(visited.has(other)){
-edges.update({id:e.id,
-color:{color:nd._origColor},
-width:4,
-dashes:[10,5],
-shadow:{enabled:true,color:nd._origColor+'60',size:8}
-});
-visitedEdges.add(e.id);
-}
-}
-});
+lightNode(nid,3,true);
+lightEdges(nid);
 visited.add(nid);
-
-// Breadcrumb
-addBreadcrumb(nid,nd._origColor,true);
-
-// Camera
-try{NET.focus(nid,{scale:1.1,animation:{duration:350,easingFunction:'easeInOutQuad'}})}catch(ex){}
-}
+prevAct.push(nid);
+addCrumb(nid,nodes.get(nid)?._origColor||'#9333ea',true);
+try{NET.focus(nid,{scale:1.05,animation:{duration:250}})}catch(x){}
 ni++;
-setTimeout(lightNode,300);
+setTimeout(doNode,perNodeDelay);
 }
-lightNode();
+doNode();
+}
+
+function dimProps(nid){
+const nd=nodes.get(nid);
+if(!nd)return null;
+return{size:nd._baseSize*1.6,color:{background:nd._origColor,border:nd._origColor+'70'},font:{color:'rgba(200,200,200,.6)',size:9},borderWidth:1};
 }
 }
 
