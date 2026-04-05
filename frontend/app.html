@@ -14,9 +14,7 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['
 </script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hidden;min-height:100vh}
-
-/* Radio/checkbox styling */
+body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hidden}
 .opt{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;border:1.5px solid #1a1a1a;background:#0e0e0e;cursor:pointer;transition:all .25s;font-size:14px}
 .opt:hover{border-color:#333}
 .opt.selected{border-color:#9333ea;background:rgba(147,51,234,.08);box-shadow:0 0 20px rgba(147,51,234,.1)}
@@ -26,205 +24,134 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hid
 .opt .chk{width:18px;height:18px;border-radius:5px;border:2px solid #333;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .opt.selected .chk{border-color:#9333ea;background:#9333ea}
 .opt.selected .chk::after{content:'';display:block;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-2px}
-
-/* Progress dots */
 .pdot{width:10px;height:10px;border-radius:50%;background:#1a1a1a;transition:all .3s}
 .pdot.active{background:#9333ea;box-shadow:0 0 10px rgba(147,51,234,.5)}
 .pdot.done{background:#22c55e}
-
-/* Loading pulse */
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
-.loader-dot{animation:pulse 1.2s ease-in-out infinite}
-
-/* Graph node glow */
-@keyframes nodeGlow{0%{box-shadow:0 0 5px rgba(147,51,234,.3)}50%{box-shadow:0 0 20px rgba(147,51,234,.6)}100%{box-shadow:0 0 5px rgba(147,51,234,.3)}}
-
-/* Step card */
 .step-card{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:12px;padding:14px;cursor:pointer;transition:all .3s}
 .step-card:hover{border-color:#333;transform:translateY(-1px)}
 .step-card.highlight{border-color:#9333ea;box-shadow:0 0 20px rgba(147,51,234,.15)}
-.step-card.sf{border-color:rgba(147,51,234,.3)}
-
-/* Profile chip */
 .chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;background:rgba(147,51,234,.1);border:1px solid rgba(147,51,234,.2);color:#ccc}
-
-/* Whatif button */
 .wif{padding:8px 14px;border-radius:8px;font-size:12px;background:#111;border:1px solid #1a1a1a;cursor:pointer;transition:all .25s;color:#999}
 .wif:hover{border-color:#333;color:#fff}
 .wif.active{border-color:#9333ea;background:rgba(147,51,234,.1);color:#fff}
-
-/* Mobile graph toggle */
-.graph-toggle{display:none}
-@media(max-width:768px){.graph-toggle{display:block}}
-
-/* Fade transitions */
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .fade-in{animation:fadeIn .5s ease both}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
-/* Legend */
-.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.slide-up{animation:slideUp .6s cubic-bezier(.16,1,.3,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+/* Graph container - stable height prevents reflow */
+#graphContainer{contain:layout style;will-change:contents}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="fixed top-0 w-full z-50 border-b border-dark-border" style="background:rgba(10,10,10,.9);backdrop-filter:blur(12px)">
+<nav class="fixed top-0 w-full z-50 border-b border-dark-border" style="background:rgba(10,10,10,.92);backdrop-filter:blur(12px)">
 <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
 <a href="index.html" class="text-base font-semibold tracking-tight">First Dollar</a>
-<a href="index.html" class="text-xs text-[#666] hover:text-white transition">&larr; Back to home</a>
+<a href="index.html" class="text-xs text-[#666] hover:text-white transition">&larr; Back</a>
 </div>
 </nav>
 
-<main class="pt-20 pb-16 px-4 max-w-6xl mx-auto" id="app">
+<main class="pt-20 pb-16 px-4 max-w-6xl mx-auto">
 
 <!-- ═══ PHASE 1: INTAKE FORM ═══ -->
-<div id="formPhase">
+<div id="phaseForm">
 <div class="max-w-lg mx-auto">
-
-<!-- Progress dots -->
 <div class="flex justify-center gap-3 mb-10">
-<div class="pdot active" data-step="0"></div>
-<div class="pdot" data-step="1"></div>
-<div class="pdot" data-step="2"></div>
-<div class="pdot" data-step="3"></div>
-<div class="pdot" data-step="4"></div>
-<div class="pdot" data-step="5"></div>
+<div class="pdot active" data-s="0"></div><div class="pdot" data-s="1"></div><div class="pdot" data-s="2"></div><div class="pdot" data-s="3"></div><div class="pdot" data-s="4"></div><div class="pdot" data-s="5"></div>
 </div>
-
 <h1 class="font-serif text-3xl md:text-4xl font-bold mb-2 text-center">Build Your Plan</h1>
 <p class="text-[#666] text-center mb-10 text-sm">Answer 6 questions. Get your personalized financial order of operations.</p>
 
-<!-- Q1 -->
-<div class="mb-8">
-<label class="block text-sm font-semibold mb-3">Q1: Do you have a bank account?</label>
-<div class="space-y-2" id="q1group">
-<label class="opt" onclick="selectRadio(this,'q1','yes')"><span class="dot"></span><input type="radio" name="q1" value="yes">Yes</label>
-<label class="opt" onclick="selectRadio(this,'q1','no')"><span class="dot"></span><input type="radio" name="q1" value="no">No</label>
-<label class="opt" onclick="selectRadio(this,'q1','have_but_dont_use')"><span class="dot"></span><input type="radio" name="q1" value="have_but_dont_use">Have but don't use</label>
+<div class="mb-8"><label class="block text-sm font-semibold mb-3">Q1: Do you have a bank account?</label>
+<div class="space-y-2" id="q1g">
+<label class="opt" onclick="sel(this,'q1','yes')"><span class="dot"></span><input type="radio" name="q1" value="yes">Yes</label>
+<label class="opt" onclick="sel(this,'q1','no')"><span class="dot"></span><input type="radio" name="q1" value="no">No</label>
+<label class="opt" onclick="sel(this,'q1','have_but_dont_use')"><span class="dot"></span><input type="radio" name="q1" value="have_but_dont_use">Have but don't use</label>
+</div></div>
+
+<div class="mb-8"><label class="block text-sm font-semibold mb-3">Q2: How do you get paid?</label>
+<div class="space-y-2" id="q2g">
+<label class="opt" onclick="sel(this,'q2','salary')"><span class="dot"></span><input type="radio" name="q2" value="salary">Salary</label>
+<label class="opt" onclick="sel(this,'q2','gig')"><span class="dot"></span><input type="radio" name="q2" value="gig">Gig work</label>
+<label class="opt" onclick="sel(this,'q2','cash')"><span class="dot"></span><input type="radio" name="q2" value="cash">Cash</label>
+<label class="opt" onclick="sel(this,'q2','irregular')"><span class="dot"></span><input type="radio" name="q2" value="irregular">Irregular</label>
+</div></div>
+
+<div class="mb-8"><label class="block text-sm font-semibold mb-3">Q3: Do you have debt? What kind?</label>
+<div class="space-y-2" id="q3g">
+<label class="opt" onclick="sel(this,'q3','none')"><span class="dot"></span><input type="radio" name="q3" value="none">None</label>
+<label class="opt" onclick="sel(this,'q3','credit_card')"><span class="dot"></span><input type="radio" name="q3" value="credit_card">Credit card</label>
+<label class="opt" onclick="sel(this,'q3','student')"><span class="dot"></span><input type="radio" name="q3" value="student">Student loans</label>
+<label class="opt" onclick="sel(this,'q3','medical')"><span class="dot"></span><input type="radio" name="q3" value="medical">Medical</label>
+<label class="opt" onclick="sel(this,'q3','multiple')"><span class="dot"></span><input type="radio" name="q3" value="multiple">Multiple types</label>
+</div></div>
+
+<div class="mb-8"><label class="block text-sm font-semibold mb-3">Q4: How much have you saved?</label>
+<div class="space-y-2" id="q4g">
+<label class="opt" onclick="sel(this,'q4','nothing')"><span class="dot"></span><input type="radio" name="q4" value="nothing">Nothing</label>
+<label class="opt" onclick="sel(this,'q4','under_500')"><span class="dot"></span><input type="radio" name="q4" value="under_500">Under $500</label>
+<label class="opt" onclick="sel(this,'q4','500_to_1000')"><span class="dot"></span><input type="radio" name="q4" value="500_to_1000">$500 - $1,000</label>
+<label class="opt" onclick="sel(this,'q4','1000_to_5000')"><span class="dot"></span><input type="radio" name="q4" value="1000_to_5000">$1,000 - $5,000</label>
+<label class="opt" onclick="sel(this,'q4','over_5000')"><span class="dot"></span><input type="radio" name="q4" value="over_5000">Over $5,000</label>
+</div></div>
+
+<div class="mb-8"><label class="block text-sm font-semibold mb-3">Q5: Do you have insurance? <span class="text-[#666] font-normal">(select all)</span></label>
+<div class="space-y-2" id="q5g">
+<label class="opt" onclick="chk(this,'renters')"><span class="chk"></span>Renters</label>
+<label class="opt" onclick="chk(this,'health')"><span class="chk"></span>Health</label>
+<label class="opt" onclick="chk(this,'auto')"><span class="chk"></span>Auto</label>
+<label class="opt" onclick="chk(this,'life')"><span class="chk"></span>Life</label>
+<label class="opt" onclick="chk(this,'none')"><span class="chk"></span>None of the above</label>
+</div></div>
+
+<div class="mb-10"><label class="block text-sm font-semibold mb-3">Q6: What's your biggest financial fear? <span class="text-[#666] font-normal">(optional)</span></label>
+<textarea id="q6" rows="3" placeholder="e.g. I am scared I will never own a home" class="w-full bg-[#0e0e0e] border border-[#1a1a1a] rounded-xl px-4 py-3 text-sm placeholder-[#444] focus:border-accent focus:outline-none transition resize-none"></textarea>
+</div>
+
+<button id="submitBtn" disabled onclick="submit()" class="w-full py-3.5 rounded-xl text-base font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed bg-accent text-white hover:bg-accent-light" style="box-shadow:0 0 30px rgba(147,51,234,.2)">Show me my plan</button>
 </div>
 </div>
 
-<!-- Q2 -->
-<div class="mb-8">
-<label class="block text-sm font-semibold mb-3">Q2: How do you get paid?</label>
-<div class="space-y-2" id="q2group">
-<label class="opt" onclick="selectRadio(this,'q2','salary')"><span class="dot"></span><input type="radio" name="q2" value="salary">Salary</label>
-<label class="opt" onclick="selectRadio(this,'q2','gig')"><span class="dot"></span><input type="radio" name="q2" value="gig">Gig work</label>
-<label class="opt" onclick="selectRadio(this,'q2','cash')"><span class="dot"></span><input type="radio" name="q2" value="cash">Cash</label>
-<label class="opt" onclick="selectRadio(this,'q2','irregular')"><span class="dot"></span><input type="radio" name="q2" value="irregular">Irregular</label>
+<!-- ═══ PHASE 2: GRAPH TRAVERSAL (replaces loading screen) ═══ -->
+<div id="phaseGraph" class="hidden">
+<div class="text-center mb-6">
+<h2 class="font-serif text-2xl font-bold">Discovering your path...</h2>
+<p class="text-[#555] text-sm mt-1" id="traversalStatus">Traversing knowledge graph</p>
+</div>
+<div id="graphContainer" class="rounded-xl border border-[#1a1a1a] bg-[#060606] mx-auto" style="height:65vh;max-height:600px"></div>
+<div class="flex items-center justify-center gap-5 mt-3 text-[10px] text-[#555]">
+<span><span class="legend-dot" style="background:#9333ea"></span> Entry</span>
+<span><span class="legend-dot" style="background:#ef4444"></span> Risk</span>
+<span><span class="legend-dot" style="background:#22c55e"></span> Action</span>
+<span><span class="legend-dot" style="background:#f59e0b"></span> Resource</span>
 </div>
 </div>
 
-<!-- Q3 -->
-<div class="mb-8">
-<label class="block text-sm font-semibold mb-3">Q3: Do you have debt? What kind?</label>
-<div class="space-y-2" id="q3group">
-<label class="opt" onclick="selectRadio(this,'q3','none')"><span class="dot"></span><input type="radio" name="q3" value="none">None</label>
-<label class="opt" onclick="selectRadio(this,'q3','credit_card')"><span class="dot"></span><input type="radio" name="q3" value="credit_card">Credit card</label>
-<label class="opt" onclick="selectRadio(this,'q3','student')"><span class="dot"></span><input type="radio" name="q3" value="student">Student loans</label>
-<label class="opt" onclick="selectRadio(this,'q3','medical')"><span class="dot"></span><input type="radio" name="q3" value="medical">Medical</label>
-<label class="opt" onclick="selectRadio(this,'q3','multiple')"><span class="dot"></span><input type="radio" name="q3" value="multiple">Multiple types</label>
-</div>
-</div>
-
-<!-- Q4 -->
-<div class="mb-8">
-<label class="block text-sm font-semibold mb-3">Q4: How much have you saved?</label>
-<div class="space-y-2" id="q4group">
-<label class="opt" onclick="selectRadio(this,'q4','nothing')"><span class="dot"></span><input type="radio" name="q4" value="nothing">Nothing</label>
-<label class="opt" onclick="selectRadio(this,'q4','under_500')"><span class="dot"></span><input type="radio" name="q4" value="under_500">Under $500</label>
-<label class="opt" onclick="selectRadio(this,'q4','500_to_1000')"><span class="dot"></span><input type="radio" name="q4" value="500_to_1000">$500 - $1,000</label>
-<label class="opt" onclick="selectRadio(this,'q4','1000_to_5000')"><span class="dot"></span><input type="radio" name="q4" value="1000_to_5000">$1,000 - $5,000</label>
-<label class="opt" onclick="selectRadio(this,'q4','over_5000')"><span class="dot"></span><input type="radio" name="q4" value="over_5000">Over $5,000</label>
-</div>
-</div>
-
-<!-- Q5 -->
-<div class="mb-8">
-<label class="block text-sm font-semibold mb-3">Q5: Do you have insurance? <span class="text-[#666] font-normal">(select all that apply)</span></label>
-<div class="space-y-2" id="q5group">
-<label class="opt" onclick="toggleCheck(this,'q5','renters')"><span class="chk"></span>Renters</label>
-<label class="opt" onclick="toggleCheck(this,'q5','health')"><span class="chk"></span>Health</label>
-<label class="opt" onclick="toggleCheck(this,'q5','auto')"><span class="chk"></span>Auto</label>
-<label class="opt" onclick="toggleCheck(this,'q5','life')"><span class="chk"></span>Life</label>
-<label class="opt" onclick="toggleCheck(this,'q5','none')"><span class="chk"></span>None of the above</label>
-</div>
-</div>
-
-<!-- Q6 -->
-<div class="mb-10">
-<label class="block text-sm font-semibold mb-3">Q6: What's your biggest financial fear? <span class="text-[#666] font-normal">(optional)</span></label>
-<textarea id="q6" rows="3" placeholder="e.g. I am scared I will never own a home" class="w-full bg-[#0e0e0e] border border-[#1a1a1a] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] focus:border-accent focus:outline-none transition resize-none"></textarea>
-</div>
-
-<!-- Submit -->
-<button id="submitBtn" disabled onclick="submitForm()" class="w-full py-3.5 rounded-xl text-base font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed bg-accent text-white hover:bg-accent-light" style="box-shadow:0 0 30px rgba(147,51,234,.2)">
-Show me my plan
-</button>
-
-</div>
-</div>
-
-<!-- ═══ PHASE 2: LOADING ═══ -->
-<div id="loadingPhase" class="hidden">
-<div class="flex flex-col items-center justify-center min-h-[60vh]">
-<div class="relative w-48 h-48 mb-8">
-<!-- Animated graph nodes -->
-<svg viewBox="0 0 200 200" class="w-full h-full">
-<circle cx="100" cy="40" r="8" fill="#9333ea" class="loader-dot" style="animation-delay:0s"/>
-<circle cx="160" cy="80" r="6" fill="#9333ea" class="loader-dot" style="animation-delay:.2s"/>
-<circle cx="140" cy="140" r="7" fill="#22c55e" class="loader-dot" style="animation-delay:.4s"/>
-<circle cx="60" cy="140" r="6" fill="#f59e0b" class="loader-dot" style="animation-delay:.6s"/>
-<circle cx="40" cy="80" r="7" fill="#ef4444" class="loader-dot" style="animation-delay:.8s"/>
-<line x1="100" y1="40" x2="160" y2="80" stroke="#9333ea" stroke-width="1" opacity=".3" class="loader-dot" style="animation-delay:.1s"/>
-<line x1="160" y1="80" x2="140" y2="140" stroke="#9333ea" stroke-width="1" opacity=".3" class="loader-dot" style="animation-delay:.3s"/>
-<line x1="140" y1="140" x2="60" y2="140" stroke="#9333ea" stroke-width="1" opacity=".3" class="loader-dot" style="animation-delay:.5s"/>
-<line x1="60" y1="140" x2="40" y2="80" stroke="#9333ea" stroke-width="1" opacity=".3" class="loader-dot" style="animation-delay:.7s"/>
-<line x1="40" y1="80" x2="100" y2="40" stroke="#9333ea" stroke-width="1" opacity=".3" class="loader-dot" style="animation-delay:.9s"/>
-</svg>
-</div>
-<h2 class="font-serif text-2xl font-bold mb-2">Building your priority queue...</h2>
-<p class="text-[#666] text-sm" id="loadingStatus">Traversing knowledge graph</p>
-</div>
-</div>
-
-<!-- ═══ PHASE 3: RESULTS ═══ -->
-<div id="resultsPhase" class="hidden">
-
-<!-- Panel A: Profile bar -->
-<div id="profileBar" class="mb-6 fade-in"></div>
-
-<!-- Split layout -->
+<!-- ═══ PHASE 3: RESULTS (queue + graph side by side) ═══ -->
+<div id="phaseResults" class="hidden">
+<div id="profileBar" class="mb-6"></div>
 <div class="grid md:grid-cols-[1fr,1fr] gap-6">
-
-<!-- Panel B: Priority Queue -->
 <div>
 <h2 class="font-serif text-xl font-bold mb-4">Your Priority Queue</h2>
-<div id="stepsContainer" class="space-y-3 mb-6"></div>
-
-<!-- What-If buttons -->
+<div id="stepsBox" class="space-y-3 mb-6"></div>
 <div class="mb-4">
-<p class="text-xs text-[#666] font-semibold uppercase tracking-wider mb-3">What-If Scenarios</p>
-<div class="flex flex-wrap gap-2" id="whatifBtns"></div>
+<p class="text-xs text-[#555] font-semibold uppercase tracking-wider mb-3">What-If Scenarios</p>
+<div class="flex flex-wrap gap-2" id="wifBox"></div>
 </div>
-
-<!-- Reasoning trace -->
-<div id="reasoningTrace" class="mt-4 p-4 rounded-xl bg-[#0e0e0e] border border-[#1a1a1a] hidden">
-<p class="text-xs text-[#666] font-semibold uppercase tracking-wider mb-2">Reasoning Path</p>
-<div id="traceContent" class="text-xs text-[#999] space-y-1"></div>
+<div id="traceBox" class="mt-4 p-4 rounded-xl bg-[#0e0e0e] border border-[#1a1a1a] hidden">
+<p class="text-xs text-[#555] font-semibold uppercase tracking-wider mb-2">Reasoning Path</p>
+<div id="traceContent" class="text-xs text-[#888] space-y-1"></div>
 </div>
 </div>
-
-<!-- Panel C: Knowledge Graph -->
 <div>
 <div class="flex items-center justify-between mb-4">
 <h2 class="font-serif text-xl font-bold">Knowledge Graph</h2>
-<button class="graph-toggle text-xs text-accent" onclick="document.getElementById('graphWrap').classList.toggle('hidden')">Toggle graph</button>
+<button class="md:hidden text-xs text-accent" onclick="document.getElementById('graphWrap2').classList.toggle('hidden')">Toggle</button>
 </div>
-<div id="graphWrap">
-<div id="graphContainer" class="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] relative" style="height:500px"></div>
-<!-- Legend -->
-<div class="flex items-center gap-4 mt-3 text-[10px] text-[#666]">
+<div id="graphWrap2">
+<div id="graphContainer2" class="rounded-xl border border-[#1a1a1a] bg-[#060606]" style="height:500px"></div>
+<div class="flex items-center gap-4 mt-3 text-[10px] text-[#555]">
 <span><span class="legend-dot" style="background:#9333ea"></span> Entry</span>
 <span><span class="legend-dot" style="background:#ef4444"></span> Risk</span>
 <span><span class="legend-dot" style="background:#22c55e"></span> Action</span>
@@ -239,304 +166,301 @@ Show me my plan
 
 <script>
 const API='http://localhost:5000';
-const answers={q1:null,q2:null,q3:null,q4:null,q5:[],q6:''};
-let currentData=null;
-let network=null;
-let activeStep=null;
+const A={q1:null,q2:null,q3:null,q4:null,q5:[],q6:''};
+let DATA=null,NET=null,NET2=null;
+const CM={purple:'#9333ea',red:'#ef4444',green:'#22c55e',amber:'#f59e0b',info:'#6366f1',gray:'#555'};
 
-// ─── Form Logic ─────────────────────────────────────────────────
-function selectRadio(el,q,val){
-document.querySelectorAll(`#${q}group .opt`).forEach(o=>o.classList.remove('selected'));
-el.classList.add('selected');
-answers[q]=val;
-updateDots();checkSubmit();
-}
-function toggleCheck(el,q,val){
+// ─── Form ───────────────────────────────────────────────────────
+function sel(el,q,v){document.querySelectorAll(`#${q}g .opt`).forEach(o=>o.classList.remove('selected'));el.classList.add('selected');A[q]=v;ud()}
+function chk(el,v){
 el.classList.toggle('selected');
-if(q==='q5'){
-if(val==='none'){
-answers.q5=['none'];
-document.querySelectorAll('#q5group .opt').forEach(o=>{o.classList.remove('selected')});
-el.classList.add('selected');
-}else{
-const noneEl=document.querySelector('#q5group .opt:last-child');
-noneEl.classList.remove('selected');
-answers.q5=answers.q5.filter(v=>v!=='none');
-if(el.classList.contains('selected')){
-if(!answers.q5.includes(val))answers.q5.push(val);
-}else{
-answers.q5=answers.q5.filter(v=>v!==val);
-}
-}
-}
-updateDots();checkSubmit();
-}
-function updateDots(){
-const filled=[answers.q1,answers.q2,answers.q3,answers.q4,answers.q5.length>0];
-document.querySelectorAll('.pdot').forEach((d,i)=>{
-if(i<5){d.className='pdot'+(filled[i]?' done':i===filled.indexOf(false)?' active':'');}
-else{d.className='pdot'+(filled.every(Boolean)?' active':'');}
-});
-}
-function checkSubmit(){
-const ready=answers.q1&&answers.q2&&answers.q3&&answers.q4&&answers.q5.length>0;
-document.getElementById('submitBtn').disabled=!ready;
+if(v==='none'){A.q5=['none'];document.querySelectorAll('#q5g .opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected')}
+else{document.querySelector('#q5g .opt:last-child').classList.remove('selected');A.q5=A.q5.filter(x=>x!=='none');
+if(el.classList.contains('selected')){if(!A.q5.includes(v))A.q5.push(v)}else{A.q5=A.q5.filter(x=>x!==v)}}
+ud()}
+function ud(){
+const f=[A.q1,A.q2,A.q3,A.q4,A.q5.length>0];
+document.querySelectorAll('.pdot').forEach((d,i)=>{d.className='pdot'+(i<5?(f[i]?' done':''):(f.every(Boolean)?' active':''))});
+document.getElementById('submitBtn').disabled=!f.every(Boolean);
 }
 
 // ─── Submit ─────────────────────────────────────────────────────
-async function submitForm(){
-answers.q6=document.getElementById('q6').value||null;
-document.getElementById('formPhase').classList.add('hidden');
-document.getElementById('loadingPhase').classList.remove('hidden');
+async function submit(){
+A.q6=document.getElementById('q6').value||null;
+// Hide form, show graph traversal phase
+document.getElementById('phaseForm').classList.add('hidden');
+document.getElementById('phaseGraph').classList.remove('hidden');
+window.scrollTo({top:0,behavior:'smooth'});
 
-const statuses=['Traversing knowledge graph','Mapping entity clusters','Running FOO rule engine','Personalizing your steps','Building visualization'];
-let si=0;
-const statusInterval=setInterval(()=>{
-si=(si+1)%statuses.length;
-document.getElementById('loadingStatus').textContent=statuses[si];
-},1200);
-
+// Fetch data from backend
 try{
-const resp=await fetch(API+'/api/query',{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({q1:answers.q1,q2:answers.q2,q3:answers.q3,q4:answers.q4,q5:answers.q5,q6:answers.q6,skip_personalize:true})
+const r=await fetch(API+'/api/query',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({q1:A.q1,q2:A.q2,q3:A.q3,q4:A.q4,q5:A.q5,q6:A.q6,skip_personalize:true})});
+DATA=await r.json();
+}catch(e){DATA=demoDB()}
+
+// Render graph immediately (all dimmed)
+renderTraversalGraph(DATA.graph,DATA.steps);
+}
+
+// ─── Traversal Graph (Phase 2) ──────────────────────────────────
+function renderTraversalGraph(g,steps){
+const c=document.getElementById('graphContainer');
+const nodesData=g.nodes.map(n=>({
+id:n.id,label:n.label||n.id.substring(0,20),
+color:{background:'rgba(60,60,60,.3)',border:'transparent'},
+font:{color:'rgba(150,150,150,.2)',size:9},
+size:n.size||10,borderWidth:0,opacity:.3,
+shadow:false,
+_origColor:CM[n.color]||'#555'
+}));
+const edgesData=g.edges.map((e,i)=>({
+id:i,from:e.from,to:e.to,
+color:{color:'rgba(80,80,80,.08)'},
+width:1,smooth:{type:'continuous'},
+_origFrom:e.from,_origTo:e.to
+}));
+const nodes=new vis.DataSet(nodesData);
+const edges=new vis.DataSet(edgesData);
+
+NET=new vis.Network(c,{nodes,edges},{
+physics:{solver:'forceAtlas2Based',forceAtlas2Based:{gravitationalConstant:-50,springLength:100,springConstant:.03},
+stabilization:{iterations:80,fit:true}},
+interaction:{dragNodes:false,zoomView:true,dragView:true},
+nodes:{shape:'dot'},edges:{arrows:{to:{enabled:false}}}
 });
-currentData=await resp.json();
-}catch(e){
-// Fallback demo data if backend not running
-currentData={persona:'gig_worker',protection_gaps:['renters','auto','life'],
-profile:{has_bank_account:answers.q1,income_type:answers.q2,debt_type:answers.q3,savings_level:answers.q4,insurance_types:answers.q5},
-steps:[{step_number:1,action:'Open a bank account',reason:'You need a safe place for your money',tier:'access',is_state_farm:false,source_nodes:['PREPAID CARD','BANK ACCOUNT']},
-{step_number:2,action:'Build emergency fund',reason:'Cover unexpected expenses',tier:'safety_net',is_state_farm:false,source_nodes:['EMERGENCY FUND','SAVING']},
-{step_number:3,action:'Pay down high-APR debt',reason:'28% APR compounds daily',tier:'stop_bleeding',is_state_farm:false,source_nodes:['CREDIT CARD DEBT','DEBT']},
-{step_number:4,action:'Get renters insurance',reason:'$15/mo protects everything',tier:'protection',is_state_farm:true,source_nodes:['RENTERS INSURANCE','STATE FARM']},
-{step_number:5,action:'Check credit report',reason:'Free at annualcreditreport.com',tier:'build',is_state_farm:false,source_nodes:['CREDIT REPORT']}],
-graph:{nodes:[{id:'BANK ACCOUNT',label:'Bank Account',color:'purple',size:20},{id:'PREPAID CARD',label:'Prepaid Card',color:'purple',size:15},
-{id:'EMERGENCY FUND',label:'Emergency Fund',color:'green',size:18},{id:'SAVING',label:'Saving',color:'green',size:12},
-{id:'CREDIT CARD DEBT',label:'CC Debt',color:'red',size:20},{id:'DEBT',label:'Debt',color:'red',size:25},
-{id:'RENTERS INSURANCE',label:'Renters Ins',color:'green',size:15},{id:'STATE FARM',label:'State Farm',color:'amber',size:18},
-{id:'CREDIT REPORT',label:'Credit Report',color:'green',size:14},{id:'INCOME',label:'Income',color:'purple',size:16}],
-edges:[{from:'BANK ACCOUNT',to:'PREPAID CARD',value:3},{from:'BANK ACCOUNT',to:'SAVING',value:2},{from:'SAVING',to:'EMERGENCY FUND',value:4},
-{from:'DEBT',to:'CREDIT CARD DEBT',value:5},{from:'CREDIT CARD DEBT',to:'BANK ACCOUNT',value:2},{from:'RENTERS INSURANCE',to:'STATE FARM',value:3},
-{from:'INCOME',to:'BANK ACCOUNT',value:4},{from:'INCOME',to:'DEBT',value:2},{from:'CREDIT REPORT',to:'DEBT',value:3},{from:'STATE FARM',to:'INCOME',value:1}]},
-whatif_scenarios:{lose_job:'What if I lose my job?',pay_off_debt:'What if I pay off debt?',get_renters_insurance:'What if I get renters insurance?',
-open_bank_account:'What if I open a bank account?',get_steady_job:'What if I get a steady job?'},
-stats:{total_steps:5}};
+
+// Stop physics after stabilization to prevent lag
+NET.once('stabilized',()=>{
+NET.setOptions({physics:false});
+// Start hop-by-hop traversal animation
+animateTraversal(nodes,edges,steps);
+});
 }
 
-// Wait minimum loading time
-await new Promise(r=>setTimeout(r,5000));
-clearInterval(statusInterval);
+function animateTraversal(nodes,edges,steps){
+// Collect all traversal node IDs from steps
+const traversalNodes=[];
+steps.forEach(s=>{(s.source_nodes||[]).forEach(n=>{if(!traversalNodes.includes(n))traversalNodes.push(n)})});
 
-document.getElementById('loadingPhase').classList.add('hidden');
-document.getElementById('resultsPhase').classList.remove('hidden');
-renderResults(currentData);
+const statuses=['Mapping entity clusters','Scoring relevance paths','Applying FOO rule engine','Ordering priority queue','Finalizing your plan'];
+let si=0;
+const statusEl=document.getElementById('traversalStatus');
+
+let hopIdx=0;
+const hopDelay=Math.max(400,Math.min(800,7000/Math.max(traversalNodes.length,1)));
+
+function illuminateHop(){
+if(hopIdx>=traversalNodes.length){
+// Traversal complete — transition to results
+statusEl.textContent='Path discovered. Building your queue...';
+setTimeout(()=>showResults(),1200);
+return;
 }
 
-// ─── Render Results ─────────────────────────────────────────────
-function renderResults(data){
+const nid=traversalNodes[hopIdx];
+// Light up node
+try{
+const orig=nodes.get(nid);
+if(orig){
+nodes.update({id:nid,
+color:{background:orig._origColor,border:'rgba(255,255,255,.6)'},
+font:{color:'#ddd',size:11},
+size:(orig.size||10)+4,
+borderWidth:2,opacity:1,
+shadow:{enabled:true,color:orig._origColor+'40',size:15}
+});
+}
+}catch(e){}
+
+// Light up connected edges
+edges.forEach(e=>{
+if(e._origFrom===nid||e._origTo===nid){
+const other=e._origFrom===nid?e._origTo:e._origFrom;
+const otherLit=traversalNodes.slice(0,hopIdx+1).includes(other);
+if(otherLit){
+edges.update({id:e.id,color:{color:'rgba(147,51,234,.5)'},width:2});
+}
+}
+});
+
+// Update status text
+if(hopIdx%3===0){statusEl.textContent=statuses[si%statuses.length];si++}
+
+hopIdx++;
+setTimeout(illuminateHop,hopDelay);
+}
+
+// Start after a brief pause
+setTimeout(illuminateHop,800);
+}
+
+// ─── Results (Phase 3) ──────────────────────────────────────────
+function showResults(){
+document.getElementById('phaseGraph').classList.add('hidden');
+document.getElementById('phaseResults').classList.remove('hidden');
+window.scrollTo({top:0,behavior:'smooth'});
+
 // Profile bar
-const pb=document.getElementById('profileBar');
-const personaLabel=data.persona.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-const gapsHtml=data.protection_gaps.map(g=>`<span class="chip">${g}</span>`).join('');
-pb.innerHTML=`<div class="p-4 rounded-xl bg-[#0e0e0e] border border-[#1a1a1a] flex flex-wrap items-center gap-3">
-<span class="chip" style="background:rgba(147,51,234,.2);border-color:rgba(147,51,234,.4);color:#a855f7;font-weight:600">${personaLabel}</span>
-${data.protection_gaps.length?'<span class="text-xs text-[#555]">Missing:</span>'+gapsHtml:''}
+const d=DATA;
+const pl=d.persona.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+const gaps=d.protection_gaps.map(g=>`<span class="chip">${g}</span>`).join('');
+document.getElementById('profileBar').innerHTML=`<div class="slide-up p-4 rounded-xl bg-[#0e0e0e] border border-[#1a1a1a] flex flex-wrap items-center gap-3">
+<span class="chip" style="background:rgba(147,51,234,.2);border-color:rgba(147,51,234,.4);color:#a855f7;font-weight:600">${pl}</span>
+${d.protection_gaps.length?'<span class="text-xs text-[#555]">Missing:</span>'+gaps:''}
 </div>`;
 
 // Steps
-const sc=document.getElementById('stepsContainer');
-sc.innerHTML='';
-data.steps.forEach((s,i)=>{
+const sb=document.getElementById('stepsBox');
+sb.innerHTML='';
+const tc={access:'#9333ea',stop_bleeding:'#ef4444',safety_net:'#22c55e',protection:'#f59e0b',build:'#3b82f6',grow:'#14b8a6'};
+d.steps.forEach((s,i)=>{
 const div=document.createElement('div');
-div.className='step-card fade-in'+(s.is_state_farm?' sf':'');
-div.style.animationDelay=(i*80)+'ms';
-div.dataset.step=i;
+div.className='step-card slide-up';
+div.style.animationDelay=(i*60)+'ms';
+div.dataset.idx=i;
 div.dataset.nodes=JSON.stringify(s.source_nodes||[]);
-div.onclick=()=>highlightStep(i);
-const tierColors={access:'#9333ea',stop_bleeding:'#ef4444',safety_net:'#22c55e',protection:'#f59e0b',build:'#3b82f6',grow:'#14b8a6'};
-const tc=tierColors[s.tier]||'#666';
+div.onclick=()=>hlStep(i);
+const c=tc[s.tier]||'#666';
 div.innerHTML=`<div class="flex items-start gap-3">
-<div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold" style="background:${tc}20;color:${tc}">${s.step_number}</div>
+<div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold" style="background:${c}20;color:${c}">${s.step_number}</div>
 <div class="flex-1 min-w-0">
-<div class="flex items-center gap-2">
-<p class="text-sm font-semibold truncate">${s.personalized_action||s.action}</p>
-${s.is_state_farm?'<span class="text-[8px] font-bold bg-accent px-1.5 py-0.5 rounded-full shrink-0">State Farm</span>':''}
-</div>
+<div class="flex items-center gap-2"><p class="text-sm font-semibold truncate">${s.personalized_action||s.action}</p>
+${s.is_state_farm?'<span class="text-[8px] font-bold bg-accent px-1.5 py-0.5 rounded-full shrink-0">State Farm</span>':''}</div>
 <p class="text-xs text-[#666] mt-1 line-clamp-2">${s.personalized_reason||s.reason}</p>
 <p class="text-[10px] text-[#444] mt-1 uppercase tracking-wider">${s.tier.replace(/_/g,' ')}</p>
-</div>
-</div>`;
-sc.appendChild(div);
+</div></div>`;
+sb.appendChild(div);
 });
 
-// What-If buttons
-const wb=document.getElementById('whatifBtns');
+// What-If
+const wb=document.getElementById('wifBox');
 wb.innerHTML='';
-if(data.whatif_scenarios){
-Object.entries(data.whatif_scenarios).forEach(([key,label])=>{
-const btn=document.createElement('button');
-btn.className='wif';
-btn.textContent=label;
-btn.onclick=()=>runWhatIf(key,btn);
-wb.appendChild(btn);
+if(d.whatif_scenarios){
+Object.entries(d.whatif_scenarios).forEach(([k,l])=>{
+const b=document.createElement('button');b.className='wif';b.textContent=l;
+b.onclick=()=>runWif(k,b);wb.appendChild(b);
 });
 }
 
-// Graph
-renderGraph(data.graph);
-
-// Animate reasoning path
-setTimeout(()=>animateReasoningPath(data),800);
+// Smaller graph in results panel
+renderResultsGraph(d.graph);
 }
 
-// ─── Graph ──────────────────────────────────────────────────────
-const colorMap={purple:'#9333ea',red:'#ef4444',green:'#22c55e',amber:'#f59e0b',info:'#6366f1',gray:'#555'};
-
-function renderGraph(graphData){
-const container=document.getElementById('graphContainer');
-const nodes=new vis.DataSet(graphData.nodes.map(n=>({
+function renderResultsGraph(g){
+const c=document.getElementById('graphContainer2');
+const nodes=new vis.DataSet(g.nodes.map(n=>({
 id:n.id,label:n.label||n.id.substring(0,18),
-color:{background:colorMap[n.color]||'#555',border:'transparent',highlight:{background:colorMap[n.color]||'#555',border:'#fff'}},
-font:{color:'#ccc',size:10},
-size:n.size||12,
-borderWidth:0,
-shadow:{enabled:true,color:'rgba(0,0,0,.3)',size:8}
+color:{background:CM[n.color]||'#555',border:'transparent',highlight:{background:CM[n.color]||'#555',border:'#fff'}},
+font:{color:'#aaa',size:9},size:n.size||10,borderWidth:0,
+shadow:{enabled:true,color:'rgba(0,0,0,.2)',size:6}
 })));
-const edges=new vis.DataSet(graphData.edges.map((e,i)=>({
+const edges=new vis.DataSet(g.edges.map((e,i)=>({
 id:i,from:e.from,to:e.to,
-color:{color:'rgba(147,51,234,.15)',highlight:'#9333ea'},
-width:1,
-smooth:{type:'continuous'}
+color:{color:'rgba(147,51,234,.12)',highlight:'#9333ea'},
+width:1,smooth:{type:'continuous'}
 })));
-
-network=new vis.Network(container,{nodes,edges},{
-physics:{solver:'forceAtlas2Based',forceAtlas2Based:{gravitationalConstant:-60,springLength:120,springConstant:0.04},stabilization:{iterations:100}},
+NET2=new vis.Network(c,{nodes,edges},{
+physics:{solver:'forceAtlas2Based',forceAtlas2Based:{gravitationalConstant:-50,springLength:100},
+stabilization:{iterations:60,fit:true}},
 interaction:{hover:true,tooltipDelay:200},
-nodes:{shape:'dot'},
-edges:{arrows:{to:{enabled:false}}},
+nodes:{shape:'dot'},edges:{arrows:{to:{enabled:false}}}
 });
+NET2.once('stabilized',()=>NET2.setOptions({physics:false}));
 
-// Hover node -> highlight step
-network.on('hoverNode',p=>{
-const nodeId=p.node;
+NET2.on('hoverNode',p=>{
 document.querySelectorAll('.step-card').forEach(card=>{
-const nodes=JSON.parse(card.dataset.nodes||'[]');
-if(nodes.includes(nodeId))card.classList.add('highlight');
-else card.classList.remove('highlight');
+const ns=JSON.parse(card.dataset.nodes||'[]');
+card.classList.toggle('highlight',ns.includes(p.node));
 });
 });
-network.on('blurNode',()=>{
-document.querySelectorAll('.step-card').forEach(c=>c.classList.remove('highlight'));
-});
+NET2.on('blurNode',()=>document.querySelectorAll('.step-card').forEach(c=>c.classList.remove('highlight')));
 }
 
-// ─── Step <-> Graph interaction ─────────────────────────────────
-function highlightStep(idx){
+// ─── Interactions ───────────────────────────────────────────────
+function hlStep(idx){
 document.querySelectorAll('.step-card').forEach(c=>c.classList.remove('highlight'));
-const card=document.querySelector(`.step-card[data-step="${idx}"]`);
+const card=document.querySelector(`.step-card[data-idx="${idx}"]`);
 if(card){
 card.classList.add('highlight');
-const nodes=JSON.parse(card.dataset.nodes||'[]');
-if(network&&nodes.length){
-network.selectNodes(nodes);
-network.focus(nodes[0],{scale:1.5,animation:{duration:500,easingFunction:'easeInOutQuad'}});
+const ns=JSON.parse(card.dataset.nodes||'[]');
+if(NET2&&ns.length){NET2.selectNodes(ns);try{NET2.focus(ns[0],{scale:1.4,animation:{duration:400}})}catch(e){}}
+const s=DATA.steps[idx];
+const tb=document.getElementById('traceBox');tb.classList.remove('hidden');
+document.getElementById('traceContent').innerHTML=`<p><span class="text-accent font-semibold">Step ${s.step_number}:</span> ${s.action}</p>
+<p class="mt-1"><span class="text-[#555]">Why:</span> ${s.reason}</p>
+${(s.source_nodes||[]).length?`<p class="mt-1"><span class="text-[#555]">Nodes:</span> ${s.source_nodes.join(' &rarr; ')}</p>`:''}
+<p class="mt-1"><span class="text-[#555]">Tier:</span> ${s.tier.replace(/_/g,' ')}</p>`;
 }
-// Show reasoning
-showReasoning(currentData.steps[idx]);
-}
-activeStep=idx;
 }
 
-function showReasoning(step){
-const trace=document.getElementById('reasoningTrace');
-const content=document.getElementById('traceContent');
-trace.classList.remove('hidden');
-const nodes=step.source_nodes||[];
-const risks=step.risk_nodes||[];
-content.innerHTML=`<p><span class="text-accent font-semibold">Step ${step.step_number}:</span> ${step.action}</p>
-<p class="mt-1"><span class="text-[#666]">Why:</span> ${step.reason}</p>
-${nodes.length?`<p class="mt-1"><span class="text-[#666]">Graph nodes:</span> ${nodes.join(' → ')}</p>`:''}
-${risks.length?`<p class="mt-1"><span class="text-[#666]">Risk nodes:</span> ${risks.join(', ')}</p>`:''}
-<p class="mt-1"><span class="text-[#666]">Tier:</span> ${step.tier.replace(/_/g,' ')}</p>`;
-}
-
-// ─── Animated reasoning path ────────────────────────────────────
-function animateReasoningPath(data){
-if(!network||!data.steps||!data.steps.length)return;
-// Dim all nodes first
-const allNodeIds=network.body.data.nodes.getIds();
-allNodeIds.forEach(id=>{
-network.body.data.nodes.update({id,opacity:.2,font:{color:'rgba(200,200,200,.2)'}});
-});
-network.body.data.edges.forEach(e=>{
-network.body.data.edges.update({id:e.id,color:{color:'rgba(147,51,234,.05)'}});
-});
-
-// Illuminate step by step
-let hopIdx=0;
-function illuminateNext(){
-if(hopIdx>=data.steps.length)return;
-const step=data.steps[hopIdx];
-const nodes=step.source_nodes||[];
-nodes.forEach(nid=>{
-try{
-network.body.data.nodes.update({id:nid,opacity:1,font:{color:'#ccc'},borderWidth:2,
-color:{border:'#fff',background:colorMap[network.body.data.nodes.get(nid)?.color?.background?'purple':'purple']||'#9333ea'}});
-}catch(e){}
-});
-// Highlight card
-const card=document.querySelector(`.step-card[data-step="${hopIdx}"]`);
-if(card){card.style.borderColor='#9333ea';setTimeout(()=>{card.style.borderColor='';},1500);}
-hopIdx++;
-if(hopIdx<data.steps.length)setTimeout(illuminateNext,600);
-else{
-// Restore all
-setTimeout(()=>{
-allNodeIds.forEach(id=>{
-try{network.body.data.nodes.update({id,opacity:1,font:{color:'#ccc'},borderWidth:0});}catch(e){}
-});
-network.body.data.edges.forEach(e=>{
-network.body.data.edges.update({id:e.id,color:{color:'rgba(147,51,234,.15)'}});
-});
-},1000);
-}
-}
-illuminateNext();
-}
-
-// ─── What-If ────────────────────────────────────────────────────
-async function runWhatIf(scenario,btn){
+async function runWif(scenario,btn){
 document.querySelectorAll('.wif').forEach(b=>b.classList.remove('active'));
 btn.classList.add('active');
 try{
-const resp=await fetch(API+'/api/whatif',{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({session_id:'default',scenario})
-});
-const data=await resp.json();
-// Re-render steps only
-const sc=document.getElementById('stepsContainer');
-sc.innerHTML='';
-data.steps.forEach((s,i)=>{
-const div=document.createElement('div');
-div.className='step-card fade-in'+(s.is_state_farm?' sf':'');
-div.style.animationDelay=(i*60)+'ms';
-div.dataset.step=i;
-div.dataset.nodes=JSON.stringify(s.source_nodes||[]);
-div.onclick=()=>highlightStep(i);
-const tierColors={access:'#9333ea',stop_bleeding:'#ef4444',safety_net:'#22c55e',protection:'#f59e0b',build:'#3b82f6',grow:'#14b8a6'};
-const tc=tierColors[s.tier]||'#666';
-div.innerHTML=`<div class="flex items-start gap-3">
-<div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold" style="background:${tc}20;color:${tc}">${s.step_number}</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-semibold truncate">${s.action}</p>
+const r=await fetch(API+'/api/whatif',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({session_id:'default',scenario})});
+const d=await r.json();
+const sb=document.getElementById('stepsBox');sb.innerHTML='';
+const tc={access:'#9333ea',stop_bleeding:'#ef4444',safety_net:'#22c55e',protection:'#f59e0b',build:'#3b82f6',grow:'#14b8a6'};
+d.steps.forEach((s,i)=>{
+const div=document.createElement('div');div.className='step-card fade-in';
+div.style.animationDelay=(i*50)+'ms';div.dataset.idx=i;div.dataset.nodes=JSON.stringify(s.source_nodes||[]);
+div.onclick=()=>hlStep(i);const c=tc[s.tier]||'#666';
+div.innerHTML=`<div class="flex items-start gap-3"><div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold" style="background:${c}20;color:${c}">${s.step_number}</div>
+<div class="flex-1 min-w-0"><p class="text-sm font-semibold truncate">${s.action}</p>
 ${s.is_state_farm?'<span class="text-[8px] font-bold bg-accent px-1.5 py-0.5 rounded-full">State Farm</span>':''}
-<p class="text-xs text-[#666] mt-1 line-clamp-2">${s.reason}</p>
-</div></div>`;
-sc.appendChild(div);
+<p class="text-xs text-[#666] mt-1 line-clamp-2">${s.reason}</p></div></div>`;
+sb.appendChild(div);
 });
-}catch(e){console.error('What-if failed:',e)}
+// Update DATA steps for interaction
+DATA.steps=d.steps;
+}catch(e){console.error(e)}
+}
+
+// ─── Demo fallback ──────────────────────────────────────────────
+function demoDB(){
+return{persona:'gig_worker',protection_gaps:['renters','auto','life','health'],
+profile:{has_bank_account:A.q1,income_type:A.q2,debt_type:A.q3,savings_level:A.q4,insurance_types:A.q5},
+steps:[
+{step_number:1,action:'Open a bank account or get a prepaid card',reason:'You need a safe place for your money. Without an account, you lose money to check-cashing fees.',tier:'access',is_state_farm:false,source_nodes:['PREPAID CARD','BANK ACCOUNT','CHECKING ACCOUNT']},
+{step_number:2,action:'Set up a system to track your income',reason:'With irregular income, knowing what comes in each month is the foundation for every decision.',tier:'access',is_state_farm:false,source_nodes:['INCOME','IRREGULAR INCOME']},
+{step_number:3,action:'Build a $1,000 emergency fund first',reason:'$1,000 covers most common emergencies. Without it, one surprise expense forces you into debt.',tier:'safety_net',is_state_farm:false,source_nodes:['EMERGENCY FUND','SAVING','SAVINGS ACCOUNT']},
+{step_number:4,action:'Pay down credit card debt aggressively',reason:'Credit card APR (15-28%) compounds daily. Every dollar toward this debt earns 15-28%.',tier:'stop_bleeding',is_state_farm:false,source_nodes:['CREDIT CARD DEBT','DEBT','CREDIT CARD']},
+{step_number:5,action:'Know your rights with debt collectors',reason:'Debt collectors cannot threaten you or call before 8am. Request debt validation in writing.',tier:'stop_bleeding',is_state_farm:false,source_nodes:['DEBT COLLECTOR']},
+{step_number:6,action:'Track all your bills and due dates',reason:'Late fees ($25-40 each) add up fast and damage credit.',tier:'safety_net',is_state_farm:false,source_nodes:['BILLS']},
+{step_number:7,action:'Get auto insurance coverage',reason:'You have $0 saved. One at-fault accident could mean tens of thousands in liability.',tier:'protection',is_state_farm:true,source_nodes:['AUTO INSURANCE','STATE FARM']},
+{step_number:8,action:'Get health insurance coverage',reason:'One ER visit without insurance averages $2,200. Check healthcare.gov for subsidized plans.',tier:'protection',is_state_farm:true,source_nodes:['HEALTH INSURANCE','STATE FARM']},
+{step_number:9,action:'Get renters insurance',reason:'Renters insurance costs $15-30/month and covers theft, fire, and liability.',tier:'protection',is_state_farm:true,source_nodes:['RENTERS INSURANCE','STATE FARM']},
+{step_number:10,action:'Check your credit report for free',reason:'Your credit report affects loan rates, apartment applications, and job offers.',tier:'build',is_state_farm:false,source_nodes:['CREDIT REPORT']},
+],
+graph:{nodes:[
+{id:'BANK ACCOUNT',label:'Bank Account',color:'purple',size:18},{id:'PREPAID CARD',label:'Prepaid Card',color:'purple',size:14},
+{id:'CHECKING ACCOUNT',label:'Checking Acct',color:'purple',size:16},{id:'INCOME',label:'Income',color:'purple',size:20},
+{id:'IRREGULAR INCOME',label:'Irregular Income',color:'purple',size:12},{id:'EMERGENCY FUND',label:'Emergency Fund',color:'green',size:16},
+{id:'SAVING',label:'Saving',color:'green',size:14},{id:'SAVINGS ACCOUNT',label:'Savings Acct',color:'green',size:12},
+{id:'CREDIT CARD DEBT',label:'CC Debt',color:'red',size:20},{id:'DEBT',label:'Debt',color:'red',size:22},
+{id:'CREDIT CARD',label:'Credit Card',color:'red',size:14},{id:'DEBT COLLECTOR',label:'Debt Collector',color:'red',size:12},
+{id:'BILLS',label:'Bills',color:'amber',size:14},{id:'AUTO INSURANCE',label:'Auto Insurance',color:'green',size:14},
+{id:'HEALTH INSURANCE',label:'Health Ins',color:'green',size:12},{id:'RENTERS INSURANCE',label:'Renters Ins',color:'green',size:12},
+{id:'STATE FARM',label:'State Farm',color:'amber',size:18},{id:'CREDIT REPORT',label:'Credit Report',color:'green',size:14},
+{id:'FEES',label:'Fees',color:'red',size:10},{id:'BANK',label:'Bank',color:'amber',size:14},
+{id:'CREDIT UNION',label:'Credit Union',color:'amber',size:10},{id:'CASH',label:'Cash',color:'purple',size:10}
+],edges:[
+{from:'INCOME',to:'BANK ACCOUNT',value:4},{from:'INCOME',to:'IRREGULAR INCOME',value:3},
+{from:'BANK ACCOUNT',to:'CHECKING ACCOUNT',value:5},{from:'BANK ACCOUNT',to:'PREPAID CARD',value:3},
+{from:'BANK ACCOUNT',to:'SAVING',value:3},{from:'SAVING',to:'EMERGENCY FUND',value:4},
+{from:'SAVING',to:'SAVINGS ACCOUNT',value:3},{from:'DEBT',to:'CREDIT CARD DEBT',value:5},
+{from:'DEBT',to:'DEBT COLLECTOR',value:3},{from:'CREDIT CARD DEBT',to:'CREDIT CARD',value:4},
+{from:'INCOME',to:'BILLS',value:3},{from:'BILLS',to:'FEES',value:2},
+{from:'AUTO INSURANCE',to:'STATE FARM',value:3},{from:'HEALTH INSURANCE',to:'STATE FARM',value:3},
+{from:'RENTERS INSURANCE',to:'STATE FARM',value:3},{from:'CREDIT REPORT',to:'DEBT',value:3},
+{from:'BANK ACCOUNT',to:'BANK',value:2},{from:'BANK ACCOUNT',to:'CREDIT UNION',value:2},
+{from:'INCOME',to:'CASH',value:2},{from:'CREDIT CARD',to:'FEES',value:2},
+{from:'INCOME',to:'DEBT',value:2},{from:'EMERGENCY FUND',to:'DEBT',value:2}
+]},
+whatif_scenarios:{lose_job:'What if I lose my job?',pay_off_debt:'What if I pay off debt?',get_renters_insurance:'What if I get renters insurance?',open_bank_account:'What if I open a bank account?',get_steady_job:'What if I get a steady job?'},
+stats:{total_steps:10}};
 }
 </script>
 </body>
