@@ -306,7 +306,7 @@ node_category:'action',edge_label:'leads_to',step_number:s.step_number,step_acti
 
 // Timing
 const totalItems=entryList.length+rpath.length;
-const delay=Math.max(600,Math.min(1000,9000/Math.max(totalItems,1)));
+const delay=Math.max(1000,Math.min(1800,14000/Math.max(totalItems,1)));
 
 // Color for category
 function catColor(cat){return CAT_COLOR[cat]||CM[cat]||'#9333ea'}
@@ -365,7 +365,7 @@ statusEl.textContent='Identifying your profile...';
 bcEl.innerHTML='';
 let ei=0;
 function nextEntry(){
-if(ei>=entryList.length){setTimeout(doPath,700);return}
+if(ei>=entryList.length){setTimeout(doPath,1200);return}
 const en=entryList[ei];
 const nid=en.id;
 if(nodes.get(nid)){
@@ -375,9 +375,9 @@ addCrumb(en.label||nid,catColor(en.category||'entry'),null,null);
 try{NET.focus(nid,{scale:1,animation:{duration:300}})}catch(x){}
 }
 ei++;
-setTimeout(nextEntry,delay*0.7);
+setTimeout(nextEntry,delay);
 }
-setTimeout(nextEntry,400);
+setTimeout(nextEntry,800);
 
 // ─── PHASE B: Reasoning path hop-by-hop ──────────────────────
 let ri=0;
